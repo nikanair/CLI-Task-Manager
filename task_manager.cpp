@@ -20,14 +20,12 @@ void TaskManager::ensureDataDir() const {
     if (dir.empty()) return;
     std::error_code ec;
     std::filesystem::create_directories(dir, ec);
-    // ignore errors for now
 }
 
 void TaskManager::load() {
     m_tasks.clear();
     std::ifstream in(m_storagePath);
     if (!in.is_open()) {
-        // no file yet
         return;
     }
     std::string line;
@@ -38,7 +36,6 @@ void TaskManager::load() {
             m_tasks.push_back(t);
             if (t.id() >= m_nextId) m_nextId = t.id() + 1;
         } catch (...) {
-            // ignore malformed lines
         }
     }
 }
