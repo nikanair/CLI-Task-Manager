@@ -28,12 +28,10 @@ std::vector<std::string> tokenize(const std::string& line) {
     return out;
 }
 
-// Simple parser for add with flags (minimal)
 int main(int argc, char** argv) {
     TaskManager mgr("data/tasks.csv");
 
     if (argc > 1) {
-        // Allow single-command usage: e.g., taskflow add "title" -d "desc"
         std::ostringstream oss;
         for (int i = 1; i < argc; ++i) {
             if (std::string(argv[i]).find(' ') != std::string::npos) {
@@ -43,7 +41,6 @@ int main(int argc, char** argv) {
             }
         }
         std::string built(oss.str());
-        // fall through to interactive parser below using built string
         std::cout << "Single-run mode not implemented in this build. Launching interactive shell...\n";
     }
 
@@ -80,7 +77,6 @@ int main(int argc, char** argv) {
                 }
             }
         } else if (cmd == "add") {
-            // gather rest of line as title and flags
             std::string rest;
             std::getline(iss, rest);
             rest = Utils::trim(rest);
@@ -89,7 +85,6 @@ int main(int argc, char** argv) {
             int priority = 0;
             std::string deadline;
 
-            // naive parsing: look for -d, -p, -t flags; title is before first flag
             size_t posFlag = std::string::npos;
             size_t posD = rest.find(" -d ");
             size_t posP = rest.find(" -p ");
@@ -106,15 +101,13 @@ int main(int argc, char** argv) {
             } else {
                 title = Utils::trim(rest.substr(0, posFlag));
                 std::string tail = rest.substr(posFlag);
-                // parse tail tokens
                 std::istringstream tails(tail);
                 std::string flag;
                 while (tails >> flag) {
                     if (flag == "-d") {
                         std::string val;
-                        std::getline(tails, val, '-'); // read until next '-' (rough)
+                        std::getline(tails, val, '-');
                         if (!val.empty()) {
-                            // remove trailing possible '-'
                             if (val.back() == ' ') val.pop_back();
                             description = Utils::trim(val);
                         }
@@ -125,12 +118,11 @@ int main(int argc, char** argv) {
                     } else if (flag == "-t") {
                         std::string val;
                         if (!(tails >> std::quoted(val))) {
-                            // fallback: read token
                             tails >> val;
                         }
                         deadline = Utils::trim(val);
                     } else {
-                        // unknown, skip
+                        
                     }
                 }
             }
@@ -174,7 +166,6 @@ int main(int argc, char** argv) {
             std::string title, description, deadline;
             int priority = -1;
 
-            // Simplified parsing: find -t, -d, -p, -D
             size_t pos;
             pos = rest.find("-t ");
             if (pos != std::string::npos) {
