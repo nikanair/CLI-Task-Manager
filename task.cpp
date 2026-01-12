@@ -22,7 +22,6 @@ void Task::setDeadline(const std::string& d) { m_deadline = d; }
 void Task::setDone(bool val) { m_done = val; }
 
 std::string Task::toCSV() const {
-    // Simple CSV: id,escaped_title,escaped_description,priority,deadline,done
     std::ostringstream oss;
     oss << m_id << ','
         << Utils::escapeCSV(m_title) << ','
@@ -35,7 +34,6 @@ std::string Task::toCSV() const {
 
 Task Task::fromCSV(const std::string& line) {
     auto parts = Utils::splitCSV(line);
-    // Expect exactly 6 parts; if not, provide best-effort defaults
     int id = 0;
     int priority = 0;
     bool done = false;
